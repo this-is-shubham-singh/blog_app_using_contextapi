@@ -1,9 +1,24 @@
-import React from 'react'
+import React, { useContext, useEffect } from "react";
+import Header from "./components/Header";
+import Pagination from "./components/Pagination";
+import Blogs from "./components/Blogs";
+import "./App.css";
+import { blogContext } from "./context/ContextProvider";
 
 const App = () => {
-  return (
-    <div>this is working</div>
-  )
-}
+  const { apiCall } = useContext(blogContext);
 
-export default App
+  useEffect(() => {
+    apiCall();
+  }, []);
+
+  return (
+    <div className="blogs-cont">
+      <Header />
+      <Blogs />
+      <Pagination />
+    </div>
+  );
+};
+
+export default App;
