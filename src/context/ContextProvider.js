@@ -4,16 +4,26 @@ import { createContext } from "react";
 export const blogContext = createContext();
 
 const ContextProvider = ({ children }) => {
-  let baseUrl = "https://codehelp-apis.vercel.app/api/get-blogs";
   const [posts, setPosts] = useState([]);
   const [pageNo, setPageNo] = useState(1);
   const [totalPages, setTotalPages] = useState();
+  const [loading, setLoading] = useState(false);
 
-  const apiCall = async (page) => {
-    const pageNo = page ?? 1;
+  const apiCall = async (page, tag, category) => {
+    setLoading(true);
+
+    let baseUrl = "https://codehelp-apis.vercel.app/api/get-blogs";
+
+    baseUrl += `?page=${page}`;
+
+    if (tag) {
+      baseUrl += `&tag=${tag}`;
+    } else if (category) {
+      baseUrl += `&category=${category}`;
+    }
 
     try {
-      const response = await fetch(`${baseUrl}?page=${pageNo}`);
+      const response = await fetch(baseUrl);
       const data = await response.json();
       // console.log(data);
 
@@ -23,6 +33,12 @@ const ContextProvider = ({ children }) => {
     } catch (e) {
       console.log(e);
     }
+
+    setLoading(false);
+  };
+
+  const changePageNo = (pageNumber) => {
+    setPageNo(pageNumber);
   };
 
   const value = {
@@ -31,6 +47,8 @@ const ContextProvider = ({ children }) => {
     pageNo,
     setPageNo,
     totalPages,
+    loading,
+    changePageNo,
   };
 
   return <blogContext.Provider value={value}>{children}</blogContext.Provider>;
